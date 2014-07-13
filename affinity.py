@@ -1,6 +1,9 @@
 import csv
 import sys
 
+BUNDLE_GENRE = 0
+BUNDLE_GENRE_CHANNEL = 1
+
 
 def read_csv_file(filename):
     filestream = open(filename, 'rU')
@@ -17,8 +20,9 @@ def read_csv_file(filename):
 
 class Affinity:
 
-    def __init__(self, csvfile):
+    def __init__(self, csvfile, bundling=BUNDLE_GENRE):
         self._rows = read_csv_file(csvfile)[1:]
+        self._bundling = bundling
         self._genres = self._count_genres()
         self._userids = self._count_userids()
 
@@ -45,14 +49,21 @@ class Affinity:
 
             genres['_total'] += 1
 
-            rowgenres = row[7].split(', ')
+            rowgenres = row[8].split(', ')
             for genre in rowgenres:
-                if genre in genres:
-                    genres[genre] += 1
+                eff_genre = self._row_to_eff_genre(row, genre)
+                if eff_genre in genres:
+                    genres[eff_genre] += 1
                 else:
-                    genres[genre] = 1
+                    genres[eff_genre] = 1
 
         return genres
+
+    def _row_to_eff_genre(self, row, genre):
+        if self._bundling == BUNDLE_GENRE:
+            return genre
+        elif self._bundling == BUNDLE_GENRE_CHANNEL:
+            return row[5].upper() + " " + genre
 
     def _count_userids(self):
         userids = {}
@@ -69,12 +80,13 @@ class Affinity:
 
             user['_total'] += 1
 
-            rowgenres = row[7].split(', ')
+            rowgenres = row[8].split(', ')
             for genre in rowgenres:
-                if genre in user:
-                    user[genre] += 1
+                eff_genre = self._row_to_eff_genre(row, genre)
+                if eff_genre in user:
+                    user[eff_genre] += 1
                 else:
-                    user[genre] = 1
+                    user[eff_genre] = 1
 
         return userids
 
@@ -97,7 +109,7 @@ class Affinity:
         return self._genres[genre.upper()]
 
 if __name__ == '__main__':
-    affinity = Affinity(sys.argv[1])
+    affinity = Affinity(sys.argv[1], BUNDLE_GENRE)
 
     for userid in affinity.userids:
         print "Affinity for userid " + userid + ":"
