@@ -109,7 +109,7 @@ class Affinity:
         return self._genres[genre.upper()]
 
 if __name__ == '__main__':
-    affinity = Affinity(sys.argv[1], BUNDLE_GENRE)
+    affinity = Affinity(sys.argv[1], BUNDLE_GENRE_CHANNEL)
 
     for userid in affinity.userids:
         print "Affinity for userid " + userid + ":"
