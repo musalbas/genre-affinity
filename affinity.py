@@ -49,7 +49,7 @@ class Affinity:
 
             genres['_total'] += 1
 
-            rowgenres = row[8].split(', ')
+            rowgenres = row[9].split(', ')
             for genre in rowgenres:
                 eff_genre = self._row_to_eff_genre(row, genre)
                 if eff_genre in genres:
@@ -80,7 +80,7 @@ class Affinity:
 
             user['_total'] += 1
 
-            rowgenres = row[8].split(', ')
+            rowgenres = row[9].split(', ')
             for genre in rowgenres:
                 eff_genre = self._row_to_eff_genre(row, genre)
                 if eff_genre in user:
