@@ -1,9 +1,14 @@
 import csv
+import math
 import operator
 import sys
 
 BUNDLE_GENRE = 0
 BUNDLE_GENRE_CHANNEL = 1
+BUNDLE_GENRE_DURATION = 2
+BUNDLE_CHANNEL_DURATION = 3
+BUNDLE_CHANNEL = 4
+BUNDLE_DURATION = 5
 
 
 def read_csv_file(filename):
@@ -69,6 +74,14 @@ class Affinity:
             return genre
         elif self._bundling == BUNDLE_GENRE_CHANNEL:
             return row[5].upper() + " " + genre
+        elif self._bundling == BUNDLE_CHANNEL:
+            return row[5].upper()
+        elif self._bundling == BUNDLE_DURATION:
+            return str(math.floor(int(row[7]) / 60.0 / 10.0))
+        elif self._bundling == BUNDLE_GENRE_DURATION:
+            return genre + " " + str(math.floor(int(row[7]) / 60.0 / 10.0))
+        elif self._bundling == BUNDLE_CHANNEL_DURATION:
+            return row[5].upper() + " " + str(math.floor(int(row[7]) / 60.0 / 10.0))
 
     def _count_userids(self):
         userids = {}
@@ -139,7 +152,7 @@ class Affinity:
         print '\n'.join(sorted_userids_percents)
 
 if __name__ == '__main__':
-    affinity = Affinity(sys.argv[1], BUNDLE_GENRE_CHANNEL)
+    affinity = Affinity(sys.argv[1], BUNDLE_GENRE_DURATION)
 
     #for userid in affinity.userids:
     #    print "Affinity for userid " + userid + ":"
