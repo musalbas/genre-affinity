@@ -126,7 +126,7 @@ class Affinity:
     def numgenre(self, genre):
         return self._genres[genre.upper()]
 
-    def cdf(self, topkpercent=0.25):
+    def cdf(self, topkpercent=0.25, minwatched=None):
         sorted_genres_watched = sorted(self._genres_watched.iteritems(), key=operator.itemgetter(1), reverse=True)
         topkgenres_num = int(len(sorted_genres_watched) * topkpercent)
 
@@ -143,6 +143,8 @@ class Affinity:
                     total_num += genres[genre]
                 if genre in topkgenres:
                     items_in_topk += genres[genre]
+            if minwatched is not None and minwatched > total_num:
+                continue
             userids_percent_in_topk[user] = items_in_topk / float(total_num)
 
         sorted_userids = sorted(userids_percent_in_topk.iteritems(), key=operator.itemgetter(1))
@@ -151,8 +153,14 @@ class Affinity:
             sorted_userids_percents.append(str(int(user[1]*100)))
         print '\n'.join(sorted_userids_percents)
 
+    def genres_ord(self):
+        sorted_genres = sorted(self._genres.iteritems(), key=operator.itemgetter(1), reverse=True)
+
+        for genre in sorted_genres:
+            print genre[0] + ", " + str(genre[1])
+
 if __name__ == '__main__':
-    affinity = Affinity(sys.argv[1], BUNDLE_GENRE_DURATION)
+    affinity = Affinity(sys.argv[1], globals()[sys.argv[2].upper()])
 
     #for userid in affinity.userids:
     #    print "Affinity for userid " + userid + ":"
@@ -160,4 +168,5 @@ if __name__ == '__main__':
     #        print genre + ": " + str(affinity.affinity(userid, genre)) + " (" + str(affinity.numwatched(userid, genre)) + "/" + str(affinity.numgenre(genre)) + " watched)"
     #    print
 
-    affinity.cdf()
+    affinity.cdf(0.10, 20)
+    #affinity.genres_ord()
